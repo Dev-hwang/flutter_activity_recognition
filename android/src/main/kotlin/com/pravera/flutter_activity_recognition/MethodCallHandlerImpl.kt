@@ -4,7 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.annotation.NonNull
-import com.pravera.flutter_activity_recognition.erros.ErrorCodes
+import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.service.PermissionManager
 
 import io.flutter.plugin.common.BinaryMessenger

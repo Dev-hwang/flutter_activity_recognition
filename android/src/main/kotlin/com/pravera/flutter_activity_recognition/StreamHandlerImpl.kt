@@ -1,7 +1,7 @@
 package com.pravera.flutter_activity_recognition
 
 import android.app.Activity
-import com.pravera.flutter_activity_recognition.erros.ErrorCodes
+import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.service.ActivityRecognitionManager
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel

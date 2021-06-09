@@ -9,7 +9,7 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.pravera.flutter_activity_recognition.Constants
-import com.pravera.flutter_activity_recognition.erros.ErrorCodes
+import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.models.PermissionRequestResult
 import io.flutter.plugin.common.PluginRegistry
 

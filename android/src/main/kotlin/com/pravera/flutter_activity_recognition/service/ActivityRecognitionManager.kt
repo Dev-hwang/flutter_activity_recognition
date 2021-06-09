@@ -10,7 +10,7 @@ import android.util.Log
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityRecognitionClient
 import com.pravera.flutter_activity_recognition.Constants
-import com.pravera.flutter_activity_recognition.erros.ErrorCodes
+import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 
 class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeListener {
 	companion object {

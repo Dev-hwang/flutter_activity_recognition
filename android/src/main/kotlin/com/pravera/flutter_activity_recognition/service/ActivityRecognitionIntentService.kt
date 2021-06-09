@@ -6,7 +6,7 @@ import androidx.core.app.JobIntentService
 import com.google.android.gms.location.ActivityRecognitionResult
 import com.google.gson.Gson
 import com.pravera.flutter_activity_recognition.Constants
-import com.pravera.flutter_activity_recognition.erros.ErrorCodes
+import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.models.ActivityData
 import com.pravera.flutter_activity_recognition.utils.ActivityRecognitionUtils
 

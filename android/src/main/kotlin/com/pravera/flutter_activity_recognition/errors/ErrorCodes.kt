@@ -1,4 +1,4 @@
-package com.pravera.flutter_activity_recognition.erros
+package com.pravera.flutter_activity_recognition.errors
 
 enum class ErrorCodes {
 	ACTIVITY_NOT_REGISTERED,
