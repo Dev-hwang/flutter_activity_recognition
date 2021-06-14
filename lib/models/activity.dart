@@ -12,10 +12,8 @@ class Activity {
   /// Constructs an instance of [Activity].
   const Activity(this.type, this.confidence);
 
-  /// Returns the data fields of [Activity] in [Map] format.
-  Map<String, dynamic> toMap() {
-    return {'type': type, 'confidence': confidence};
-  }
+  /// Returns the data fields of [Activity] in JSON format.
+  Map<String, dynamic> toJson() => {'type': type, 'confidence': confidence};
 
   /// Gets an activity of type UNKNOWN.
   static Activity get unknown =>

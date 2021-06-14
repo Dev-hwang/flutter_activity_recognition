@@ -16,7 +16,7 @@ class _ExampleAppState extends State<ExampleApp> {
   StreamSubscription<Activity>? _activityStreamSubscription;
 
   void _onActivityReceive(Activity activity) {
-    dev.log('Activity Detected >> ${activity.toMap()}');
+    dev.log('Activity Detected >> ${activity.toJson()}');
     _activityStreamController.sink.add(activity);
   }
 
@@ -75,7 +75,7 @@ class _ExampleAppState extends State<ExampleApp> {
       stream: _activityStreamController.stream,
       builder: (context, snapshot) {
         final updatedDateTime = DateTime.now();
-        final content = snapshot.data?.toMap().toString() ?? '';
+        final content = snapshot.data?.toJson().toString() ?? '';
 
         return ListView(
           physics: const BouncingScrollPhysics(),
