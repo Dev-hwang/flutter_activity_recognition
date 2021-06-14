@@ -13,7 +13,7 @@ To use this plugin, add `flutter_activity_recognition` as a [dependency in your 
 
 ```yaml
 dependencies:
-  flutter_activity_recognition: ^1.0.1
+  flutter_activity_recognition: ^1.0.2
 ```
 
 After adding the `flutter_activity_recognition` plugin to the flutter project, we need to specify the platform-specific permissions and services to use for this plugin to work properly.
