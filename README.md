@@ -28,17 +28,6 @@ Open the `AndroidManifest.xml` file and add the following permissions between th
 <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 ```
 
-And specify the service and receiver inside the `<application>` tag as follows.
-
-```
-<receiver
-    android:name="com.pravera.flutter_activity_recognition.service.ActivityRecognitionIntentReceiver" />
-<service
-    android:name="com.pravera.flutter_activity_recognition.service.ActivityRecognitionIntentService"
-    android:permission="android.permission.BIND_JOB_SERVICE"
-    android:stopWithTask="true" />
-```
-
 ### :baby_chick: iOS
 
 Open the `ios/Runner/Info.plist` file and add the following permission inside the `<dict>` tag.
