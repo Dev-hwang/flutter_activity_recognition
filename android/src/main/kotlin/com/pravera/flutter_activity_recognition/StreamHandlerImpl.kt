@@ -1,13 +1,14 @@
 package com.pravera.flutter_activity_recognition
 
 import android.app.Activity
+import android.content.Context
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.service.ActivityRecognitionManager
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 
 /** StreamHandlerImpl */
-class StreamHandlerImpl: EventChannel.StreamHandler {
+class StreamHandlerImpl(private val context: Context): EventChannel.StreamHandler {
 	private lateinit var eventChannel: EventChannel
 	private lateinit var activityRecognitionManager: ActivityRecognitionManager
 
@@ -33,17 +34,13 @@ class StreamHandlerImpl: EventChannel.StreamHandler {
 	}
 
 	override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-		if (activity == null) return
-		activityRecognitionManager.startService(
-				activity!!,
+		activityRecognitionManager.startService(context,
 				onSuccess = { },
 				onError = { handleError(events, it) },
-				updatesListener = { events?.success(it) }
-		)
+				updatesListener = { events?.success(it) })
 	}
 
 	override fun onCancel(arguments: Any?) {
-		if (activity == null) return
-		activityRecognitionManager.stopService(activity!!)
+		activityRecognitionManager.stopService(context)
 	}
 }

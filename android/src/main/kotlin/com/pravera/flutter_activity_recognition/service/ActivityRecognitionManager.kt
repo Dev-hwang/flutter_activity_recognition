@@ -1,7 +1,6 @@
 package com.pravera.flutter_activity_recognition.service
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -14,7 +13,7 @@ import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 
 class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeListener {
 	companion object {
-		const val TAG = "ARManager"
+		const val TAG = "ActivityRecognition"
 		const val UPDATES_INTERVAL_MILLIS = 1000L
 	}
 
@@ -25,24 +24,24 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 	private var pendingIntent: PendingIntent? = null
 	private var serviceClient: ActivityRecognitionClient? = null
 
-	fun startService(activity: Activity, onSuccess: (() -> Unit), onError: ((ErrorCodes) -> Unit),
+	fun startService(context: Context, onSuccess: (() -> Unit), onError: ((ErrorCodes) -> Unit),
 			updatesListener: ((String) -> Unit)) {
 
 		if (serviceClient != null) {
 			Log.d(TAG, "The activity recognition service has already started.")
-			stopService(activity)
+			stopService(context)
 		}
 
 		this.successCallback = onSuccess
 		this.errorCallback = onError
 		this.updatesCallback = updatesListener
 
-		registerSharedPreferenceChangeListener(activity)
-		requestActivityUpdates(activity)
+		registerSharedPreferenceChangeListener(context)
+		requestActivityUpdates(context)
 	}
 
-	fun stopService(activity: Activity) {
-		unregisterSharedPreferenceChangeListener(activity)
+	fun stopService(context: Context) {
+		unregisterSharedPreferenceChangeListener(context)
 		removeActivityUpdates()
 
 		this.errorCallback = null
@@ -50,8 +49,8 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		this.updatesCallback = null
 	}
 
-	private fun registerSharedPreferenceChangeListener(activity: Activity) {
-		val prefs = activity.getSharedPreferences(
+	private fun registerSharedPreferenceChangeListener(context: Context) {
+		val prefs = context.getSharedPreferences(
 				Constants.ACTIVITY_RECOGNITION_RESULT_PREFS_NAME, Context.MODE_PRIVATE) ?: return
 		prefs.registerOnSharedPreferenceChangeListener(this)
 		with (prefs.edit()) {
@@ -61,16 +60,16 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		}
 	}
 
-	private fun unregisterSharedPreferenceChangeListener(activity: Activity) {
-		val prefs = activity.getSharedPreferences(
+	private fun unregisterSharedPreferenceChangeListener(context: Context) {
+		val prefs = context.getSharedPreferences(
 				Constants.ACTIVITY_RECOGNITION_RESULT_PREFS_NAME, Context.MODE_PRIVATE) ?: return
 		prefs.unregisterOnSharedPreferenceChangeListener(this)
 	}
 
 	@SuppressLint("MissingPermission")
-	private fun requestActivityUpdates(activity: Activity) {
-		pendingIntent = getPendingIntentForService(activity)
-		serviceClient = ActivityRecognition.getClient(activity)
+	private fun requestActivityUpdates(context: Context) {
+		pendingIntent = getPendingIntentForService(context)
+		serviceClient = ActivityRecognition.getClient(context)
 		
 		val task = serviceClient?.requestActivityUpdates(UPDATES_INTERVAL_MILLIS, pendingIntent!!)
 		task?.addOnSuccessListener { successCallback?.invoke() }
@@ -87,9 +86,9 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		serviceClient = null
 	}
 
-	private fun getPendingIntentForService(activity: Activity): PendingIntent {
-		val intent = Intent(activity, ActivityRecognitionIntentReceiver::class.java)
-		return PendingIntent.getBroadcast(activity, 0, intent,
+	private fun getPendingIntentForService(context: Context): PendingIntent {
+		val intent = Intent(context, ActivityRecognitionIntentReceiver::class.java)
+		return PendingIntent.getBroadcast(context, 0, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT)
 	}
 

@@ -12,10 +12,10 @@ class FlutterActivityRecognitionPlugin: FlutterPlugin, ActivityAware {
   private lateinit var streamHandler: StreamHandlerImpl
 
   override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    methodCallHandler = MethodCallHandlerImpl()
+    methodCallHandler = MethodCallHandlerImpl(binding.applicationContext)
     methodCallHandler.startListening(binding.binaryMessenger)
 
-    streamHandler = StreamHandlerImpl()
+    streamHandler = StreamHandlerImpl(binding.applicationContext)
     streamHandler.startListening(binding.binaryMessenger)
   }
 

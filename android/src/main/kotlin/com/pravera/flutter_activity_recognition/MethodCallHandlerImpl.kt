@@ -3,6 +3,7 @@ package com.pravera.flutter_activity_recognition
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import androidx.annotation.NonNull
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.service.PermissionManager
@@ -12,7 +13,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 /** MethodCallHandlerImpl */
-class MethodCallHandlerImpl: MethodChannel.MethodCallHandler {
+class MethodCallHandlerImpl(private val context: Context): MethodChannel.MethodCallHandler {
 	private lateinit var methodChannel: MethodChannel
 	private lateinit var permissionManager: PermissionManager
 
@@ -51,13 +52,11 @@ class MethodCallHandlerImpl: MethodChannel.MethodCallHandler {
 				result.success(reqResult.toString())
 			}
 			"requestPermission" -> {
-				permissionManager.requestPermission(
-						activity!!,
+				permissionManager.requestPermission(activity!!,
 						permission = Manifest.permission.ACTIVITY_RECOGNITION,
 						requestCode = Constants.ACTIVITY_RECOGNITION_PERMISSION_REQ_CODE,
 						onResult = { result.success(it.toString()) },
-						onError = { handleError(result, it) }
-				)
+						onError = { handleError(result, it) })
 			}
 			else -> result.notImplemented()
 		}

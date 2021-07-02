@@ -15,10 +15,11 @@ import io.flutter.plugin.common.PluginRegistry
 
 class PermissionManager: PluginRegistry.RequestPermissionsResultListener {
 	private var activity: Activity? = null
+
 	private var resultCallback: ((PermissionRequestResult) -> Unit)? = null
 	private var errorCallback: ((ErrorCodes) -> Unit)? = null
 
-  fun checkPermission(activity: Activity, permission: String): PermissionRequestResult {
+	fun checkPermission(activity: Activity, permission: String): PermissionRequestResult {
 		// if your device is below Android 10, the system automatically grants permission.
 		if (permission == Manifest.permission.ACTIVITY_RECOGNITION
 				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
@@ -38,12 +39,12 @@ class PermissionManager: PluginRegistry.RequestPermissionsResultListener {
 
 			return PermissionRequestResult.DENIED
 		}
-  }
+	}
 
-  fun requestPermission(activity: Activity, permission: String, requestCode: Int,
+	fun requestPermission(activity: Activity, permission: String, requestCode: Int,
 			onResult: ((PermissionRequestResult) -> Unit), onError: ((ErrorCodes) -> Unit)) {
 		// if your device is below Android 10, the system automatically grants permission.
-		if (permission == Manifest.permission.ACTIVITY_RECOGNITION 
+		if (permission == Manifest.permission.ACTIVITY_RECOGNITION
 				&& Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
 			onResult(PermissionRequestResult.GRANTED)
 			return
@@ -54,12 +55,12 @@ class PermissionManager: PluginRegistry.RequestPermissionsResultListener {
 		this.errorCallback = onError
 
 		ActivityCompat.requestPermissions(activity, arrayOf(permission), requestCode)
-  }
+	}
 
 	private fun savePermissionRequestResult(
 			activity: Activity?, permission: String, result: PermissionRequestResult) {
-    val prefs = activity?.getSharedPreferences(
-				Constants.PERMISSION_REQUEST_RESULT_PREFS_NAME, Context.MODE_PRIVATE) ?: return
+		val prefs = activity?.getSharedPreferences(
+					Constants.PERMISSION_REQUEST_RESULT_PREFS_NAME, Context.MODE_PRIVATE) ?: return
 
 		with (prefs.edit()) {
 			putString(permission, result.toString())
@@ -107,6 +108,6 @@ class PermissionManager: PluginRegistry.RequestPermissionsResultListener {
 		savePermissionRequestResult(activity, pString, pResult)
 		resultCallback?.invoke(pResult)
 
-    return true
-  }
+		return true
+	}
 }
