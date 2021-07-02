@@ -8,10 +8,8 @@ class ActivityRecognitionUtils {
 			return when (type) {
 				DetectedActivity.IN_VEHICLE -> "IN_VEHICLE"
 				DetectedActivity.ON_BICYCLE -> "ON_BICYCLE"
-				DetectedActivity.ON_FOOT -> "ON_FOOT"
 				DetectedActivity.RUNNING -> "RUNNING"
 				DetectedActivity.STILL -> "STILL"
-				DetectedActivity.TILTING -> "TILTING"
 				DetectedActivity.WALKING -> "WALKING"
 				else -> "UNKNOWN"
 			}

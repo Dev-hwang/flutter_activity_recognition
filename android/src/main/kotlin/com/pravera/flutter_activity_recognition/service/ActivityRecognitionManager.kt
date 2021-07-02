@@ -6,15 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
-import com.google.android.gms.location.ActivityRecognition
-import com.google.android.gms.location.ActivityRecognitionClient
+import com.google.android.gms.location.*
 import com.pravera.flutter_activity_recognition.Constants
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 
 class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeListener {
 	companion object {
 		const val TAG = "ActivityRecognition"
-		const val UPDATES_INTERVAL_MILLIS = 1000L
+		//const val UPDATES_INTERVAL_MILLIS = 1000L
 	}
 
 	private var successCallback: (() -> Unit)? = null
@@ -70,8 +69,37 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 	private fun requestActivityUpdates(context: Context) {
 		pendingIntent = getPendingIntentForService(context)
 		serviceClient = ActivityRecognition.getClient(context)
-		
-		val task = serviceClient?.requestActivityUpdates(UPDATES_INTERVAL_MILLIS, pendingIntent!!)
+
+		val transitions = mutableListOf<ActivityTransition>()
+		transitions +=
+				ActivityTransition.Builder()
+						.setActivityType(DetectedActivity.IN_VEHICLE)
+						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+						.build()
+		transitions +=
+				ActivityTransition.Builder()
+						.setActivityType(DetectedActivity.ON_BICYCLE)
+						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+						.build()
+		transitions +=
+				ActivityTransition.Builder()
+						.setActivityType(DetectedActivity.RUNNING)
+						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+						.build()
+		transitions +=
+				ActivityTransition.Builder()
+						.setActivityType(DetectedActivity.STILL)
+						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+						.build()
+		transitions +=
+				ActivityTransition.Builder()
+						.setActivityType(DetectedActivity.WALKING)
+						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+						.build()
+
+		val request = ActivityTransitionRequest(transitions)
+
+		val task = serviceClient?.requestActivityTransitionUpdates(request, pendingIntent!!)
 		task?.addOnSuccessListener { successCallback?.invoke() }
 		task?.addOnFailureListener { errorCallback?.invoke(ErrorCodes.ACTIVITY_UPDATES_REQUEST_FAILED) }
 	}
