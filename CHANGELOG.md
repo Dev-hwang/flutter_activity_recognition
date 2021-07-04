@@ -1,3 +1,8 @@
+## 1.1.2
+
+* Fix `requestPermission` not working properly.
+* Change the `getActivityStream` function to a `getter` function.
+
 ## 1.1.0
 
 * Move component declaration inside the plugin. Check the Android settings in the readme.
