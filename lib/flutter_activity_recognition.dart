@@ -27,9 +27,9 @@ class FlutterActivityRecognition {
   final _eventChannel = EventChannel('flutter_activity_recognition/updates');
 
   /// Gets the activity stream.
-  Stream<Activity> getActivityStream() {
-    return _eventChannel.receiveBroadcastStream().map((result) {
-      final data = Map<String, dynamic>.from(jsonDecode(result));
+  Stream<Activity> get activityStream {
+    return _eventChannel.receiveBroadcastStream().map((event) {
+      final data = Map<String, dynamic>.from(jsonDecode(event));
       final type = getActivityTypeFromString(data['type']);
       final confidence = getActivityConfidenceFromString(data['confidence']);
       return Activity(type, confidence);

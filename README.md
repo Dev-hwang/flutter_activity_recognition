@@ -71,8 +71,9 @@ Future<bool> isPermissionGrants() async {
 
 ```dart
 // Subscribe to the activity stream.
-final activityStreamSubscription = activityRecognition.getActivityStream()
-  .handleError(_handleError).listen(_onActivityReceive);
+final _activityStreamSubscription = activityRecognition.activityStream
+  .handleError(_handleError)
+  .listen(_onActivityReceive);
 ```
 
 4. When the widget is dispose or the plugin is finished using, cancel the subscription.

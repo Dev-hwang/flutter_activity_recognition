@@ -45,8 +45,9 @@ class _ExampleAppState extends State<ExampleApp> {
       }
 
       // Subscribe to the activity stream.
-      _activityStreamSubscription = activityRecognition.getActivityStream()
-          .handleError(_handleError).listen(_onActivityReceive);
+      _activityStreamSubscription = activityRecognition.activityStream
+          .handleError(_handleError)
+          .listen(_onActivityReceive);
     });
   }
 
