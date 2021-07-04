@@ -7,6 +7,7 @@ import android.content.Context
 import androidx.annotation.NonNull
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 import com.pravera.flutter_activity_recognition.service.PermissionManager
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
@@ -32,6 +33,10 @@ class MethodCallHandlerImpl(private val context: Context): MethodChannel.MethodC
 
 	fun setActivity(activity: Activity?) {
 		this.activity = activity
+	}
+
+	fun initListenersUsingBinding(binding: ActivityPluginBinding?) {
+		binding?.addRequestPermissionsResultListener(permissionManager)
 	}
 
 	private fun handleError(result: MethodChannel.Result, errorCode: ErrorCodes) {

@@ -29,6 +29,7 @@ class FlutterActivityRecognitionPlugin: FlutterPlugin, ActivityAware {
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     methodCallHandler.setActivity(binding.activity)
+    methodCallHandler.initListenersUsingBinding(binding)
     streamHandler.setActivity(binding.activity)
   }
 
