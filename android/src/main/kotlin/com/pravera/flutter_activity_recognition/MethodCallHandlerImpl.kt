@@ -46,7 +46,7 @@ class MethodCallHandlerImpl(private val context: Context): MethodChannel.MethodC
 	@SuppressLint("InlinedApi")
 	override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
 		if (activity == null) {
-			handleError(result, ErrorCodes.ACTIVITY_NOT_REGISTERED)
+			handleError(result, ErrorCodes.ACTIVITY_NOT_ATTACHED)
 			return
 		}
 
@@ -57,11 +57,13 @@ class MethodCallHandlerImpl(private val context: Context): MethodChannel.MethodC
 				result.success(reqResult.toString())
 			}
 			"requestPermission" -> {
-				permissionManager.requestPermission(activity!!,
-						permission = Manifest.permission.ACTIVITY_RECOGNITION,
-						requestCode = Constants.ACTIVITY_RECOGNITION_PERMISSION_REQ_CODE,
-						onResult = { result.success(it.toString()) },
-						onError = { handleError(result, it) })
+				permissionManager.requestPermission(
+					activity = activity!!,
+					permission = Manifest.permission.ACTIVITY_RECOGNITION,
+					requestCode = Constants.ACTIVITY_RECOGNITION_PERMISSION_REQ_CODE,
+					onResult = { result.success(it.toString()) },
+					onError = { handleError(result, it) }
+				)
 			}
 			else -> result.notImplemented()
 		}

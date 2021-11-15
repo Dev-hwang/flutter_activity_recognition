@@ -34,10 +34,12 @@ class StreamHandlerImpl(private val context: Context): EventChannel.StreamHandle
 	}
 
 	override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-		activityRecognitionManager.startService(context,
-				onSuccess = { },
-				onError = { handleError(events, it) },
-				updatesListener = { events?.success(it) })
+		activityRecognitionManager.startService(
+			context = context,
+			onSuccess = { },
+			onError = { handleError(events, it) },
+			updatesListener = { events?.success(it) }
+		)
 	}
 
 	override fun onCancel(arguments: Any?) {
