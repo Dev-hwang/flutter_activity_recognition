@@ -10,6 +10,8 @@ class ActivityRecognitionUtils {
 				DetectedActivity.ON_BICYCLE -> "ON_BICYCLE"
 				DetectedActivity.RUNNING -> "RUNNING"
 				DetectedActivity.STILL -> "STILL"
+				DetectedActivity.ON_FOOT,
+				DetectedActivity.TILTING,
 				DetectedActivity.WALKING -> "WALKING"
 				else -> "UNKNOWN"
 			}
@@ -17,8 +19,8 @@ class ActivityRecognitionUtils {
 
 		fun getActivityConfidenceFromValue(confidence: Int): String {
 			return when (confidence) {
-				in 75..100 -> "HIGH"
-				in 50..75 -> "MEDIUM"
+				in 80..100 -> "HIGH"
+				in 50..80 -> "MEDIUM"
 				else -> "LOW"
 			}
 		}

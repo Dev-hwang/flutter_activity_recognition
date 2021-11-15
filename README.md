@@ -126,8 +126,8 @@ Defines the confidence of activity.
 
 | Value | Description |
 |---|---|
-| `HIGH` | High accuracy: 75~100 |
-| `MEDIUM` | Medium accuracy: 50~75 |
+| `HIGH` | High accuracy: 80~100 |
+| `MEDIUM` | Medium accuracy: 50~80 |
 | `LOW` | Low accuracy: 0~50 |
 
 ## Support

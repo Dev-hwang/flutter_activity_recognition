@@ -13,7 +13,7 @@ import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeListener {
 	companion object {
 		const val TAG = "ActivityRecognition"
-		//const val UPDATES_INTERVAL_MILLIS = 1000L
+		const val UPDATES_INTERVAL_MILLIS = 5000L
 	}
 
 	private var successCallback: (() -> Unit)? = null
@@ -70,36 +70,7 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		pendingIntent = getPendingIntentForService(context)
 		serviceClient = ActivityRecognition.getClient(context)
 
-		val transitions = mutableListOf<ActivityTransition>()
-		transitions +=
-				ActivityTransition.Builder()
-						.setActivityType(DetectedActivity.IN_VEHICLE)
-						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-						.build()
-		transitions +=
-				ActivityTransition.Builder()
-						.setActivityType(DetectedActivity.ON_BICYCLE)
-						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-						.build()
-		transitions +=
-				ActivityTransition.Builder()
-						.setActivityType(DetectedActivity.RUNNING)
-						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-						.build()
-		transitions +=
-				ActivityTransition.Builder()
-						.setActivityType(DetectedActivity.STILL)
-						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-						.build()
-		transitions +=
-				ActivityTransition.Builder()
-						.setActivityType(DetectedActivity.WALKING)
-						.setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-						.build()
-
-		val request = ActivityTransitionRequest(transitions)
-
-		val task = serviceClient?.requestActivityTransitionUpdates(request, pendingIntent!!)
+		val task = serviceClient?.requestActivityUpdates(UPDATES_INTERVAL_MILLIS, pendingIntent!!)
 		task?.addOnSuccessListener { successCallback?.invoke() }
 		task?.addOnFailureListener { errorCallback?.invoke(ErrorCodes.ACTIVITY_UPDATES_REQUEST_FAILED) }
 	}

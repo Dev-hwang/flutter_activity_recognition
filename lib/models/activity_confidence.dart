@@ -1,9 +1,9 @@
 /// Defines the confidence of activity.
 enum ActivityConfidence {
-  /// High accuracy: 75~100
+  /// High accuracy: 80~100
   HIGH,
 
-  /// Medium accuracy: 50~75
+  /// Medium accuracy: 50~80
   MEDIUM,
 
   /// Low accuracy: 0~50

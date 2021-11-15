@@ -3,7 +3,7 @@ package com.pravera.flutter_activity_recognition.service
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
-import com.google.android.gms.location.ActivityTransitionResult
+import com.google.android.gms.location.ActivityRecognitionResult
 import com.google.gson.Gson
 import com.pravera.flutter_activity_recognition.Constants
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
@@ -20,14 +20,14 @@ class ActivityRecognitionIntentService: JobIntentService() {
 	}
 
 	override fun onHandleWork(intent: Intent) {
-		val extractedResult = ActivityTransitionResult.extractResult(intent)
-		val transitionEvent = extractedResult?.transitionEvents?.last()
+		val extractedResult = ActivityRecognitionResult.extractResult(intent)
+		val probableActivities = extractedResult?.probableActivities
+		val mostProbableActivity = probableActivities?.maxBy { it.confidence } ?: return
 
-		val activityType = ActivityRecognitionUtils
-				.getActivityTypeFromValue(transitionEvent?.activityType ?: -1)
-		val activityConfidence = ActivityRecognitionUtils
-				.getActivityConfidenceFromValue(100)
-		val activityData = ActivityData(activityType, activityConfidence)
+		val activityData = ActivityData(
+			ActivityRecognitionUtils.getActivityTypeFromValue(mostProbableActivity.type),
+			ActivityRecognitionUtils.getActivityConfidenceFromValue(mostProbableActivity.confidence)
+		)
 
 		var prefsKey: String
 		var prefsValue: String
