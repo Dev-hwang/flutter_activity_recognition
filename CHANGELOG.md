@@ -1,3 +1,10 @@
+## 1.2.0
+
+* Rollback to previous activity recognition API.
+* Fixed an issue where IllegalArgumentException was thrown when starting the service on Android version 11 and higher.
+* Bump Android minSdkVersion to 23.
+* Bump Android compileSdkVersion to 31.
+
 ## 1.1.2
 
 * Fix `requestPermission` not working properly.
