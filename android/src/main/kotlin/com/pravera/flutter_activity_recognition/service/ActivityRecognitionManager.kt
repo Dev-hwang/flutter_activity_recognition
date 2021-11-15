@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.util.Log
 import com.google.android.gms.location.*
 import com.pravera.flutter_activity_recognition.Constants
@@ -87,8 +88,11 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 
 	private fun getPendingIntentForService(context: Context): PendingIntent {
 		val intent = Intent(context, ActivityRecognitionIntentReceiver::class.java)
-		return PendingIntent.getBroadcast(context, 0, intent,
-				PendingIntent.FLAG_UPDATE_CURRENT)
+		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)
+		} else {
+			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+		}
 	}
 
 	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
