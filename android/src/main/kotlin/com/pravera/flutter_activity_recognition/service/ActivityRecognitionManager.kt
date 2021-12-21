@@ -91,7 +91,7 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)
 		} else {
-			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+			PendingIntent.getBroadcast(context, 0, intent, 0)
 		}
 	}
 
