@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Downgrade Android minSdkVersion to 21.
+
 ## 1.2.0
 
 * Rollback to previous activity recognition API.
