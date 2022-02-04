@@ -22,7 +22,7 @@ class ActivityRecognitionIntentService: JobIntentService() {
 	override fun onHandleWork(intent: Intent) {
 		val extractedResult = ActivityRecognitionResult.extractResult(intent)
 		val probableActivities = extractedResult?.probableActivities
-		val mostProbableActivity = probableActivities?.maxBy { it.confidence } ?: return
+		val mostProbableActivity = probableActivities?.maxByOrNull { it.confidence } ?: return
 
 		val activityData = ActivityData(
 			ActivityRecognitionUtils.getActivityTypeFromValue(mostProbableActivity.type),
