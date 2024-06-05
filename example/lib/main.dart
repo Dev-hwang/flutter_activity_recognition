@@ -27,7 +27,7 @@ class _ExampleAppState extends State<ExampleApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final activityRecognition = FlutterActivityRecognition.instance;
 
       // Check if the user has granted permission. If not, request permission.

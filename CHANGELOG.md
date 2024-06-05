@@ -1,3 +1,7 @@
+## 3.1.0
+
+* [**FEAT**] Support AGP 8
+
 ## 3.0.0
 
 * [**CHORE**] Update dependency constraints to `sdk: '>=2.18.0 <4.0.0'` `flutter: '>=3.3.0'`

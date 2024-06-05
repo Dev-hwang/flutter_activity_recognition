@@ -43,5 +43,9 @@
 	<false/>
 	<key>NSMotionUsageDescription</key>
     <string>Used to recognize user activity information.</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>
