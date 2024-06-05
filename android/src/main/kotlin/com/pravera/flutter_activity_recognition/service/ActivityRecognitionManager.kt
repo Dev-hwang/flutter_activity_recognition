@@ -95,14 +95,14 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		}
 	}
 
-	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
 		when (key) {
 			Constants.ACTIVITY_DATA_PREFS_KEY -> {
-				val data = sharedPreferences.getString(key, null) ?: return
+				val data = sharedPreferences?.getString(key, null) ?: return
 				updatesCallback?.invoke(data)
 			}
 			Constants.ACTIVITY_ERROR_PREFS_KEY -> {
-				val error = sharedPreferences.getString(key, null) ?: return
+				val error = sharedPreferences?.getString(key, null) ?: return
 				errorCallback?.invoke(ErrorCodes.valueOf(error))
 			}
 		}
