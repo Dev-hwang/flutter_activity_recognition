@@ -45,9 +45,8 @@ class FlutterActivityRecognition {
 
   /// Request activity recognition permission.
   Future<PermissionRequestResult> requestPermission() async {
-    final permissionResult = (Platform.isAndroid)
-        ? await _methodChannel.invokeMethod('requestPermission')
-        : await _methodChannel.invokeMethod('checkPermission');
+    final permissionResult =
+        await _methodChannel.invokeMethod('requestPermission');
     return getPermissionRequestResultFromString(permissionResult);
   }
 }

@@ -16,14 +16,13 @@ dependencies:
   flutter_activity_recognition: ^3.1.0
 ```
 
-After adding the `flutter_activity_recognition` plugin to the flutter project, we need to specify the platform-specific permissions and services to use for this plugin to work properly.
+After adding the `flutter_activity_recognition` plugin to the flutter project, we need to specify the platform-specific permissions to use for this plugin to work properly.
 
 ### :baby_chick: Android
 
 Open the `AndroidManifest.xml` file and add the following permissions between the `<manifest>` and `<application>` tags.
 
 ```
-<uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 ```

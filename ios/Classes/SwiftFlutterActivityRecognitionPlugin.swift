@@ -1,7 +1,7 @@
 import Flutter
 import UIKit
 
-public class SwiftFlutterActivityRecognitionPlugin: NSObject, FlutterPlugin {
+public class SwiftFlutterActivityRecognitionPlugin : NSObject, FlutterPlugin {
   private var methodCallHandler: MethodCallHandlerImpl? = nil
   private var streamHandler: StreamHandlerImpl? = nil
   

@@ -6,35 +6,29 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import com.google.android.gms.location.*
-import com.pravera.flutter_activity_recognition.Constants
+import com.pravera.flutter_activity_recognition.PreferencesKey
+import com.pravera.flutter_activity_recognition.RequestCode
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
+import io.flutter.Log
 
-class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeListener {
+class ActivityRecognitionManager : SharedPreferences.OnSharedPreferenceChangeListener {
 	companion object {
-		const val TAG = "ActivityRecognition"
-		const val UPDATES_INTERVAL_MILLIS = 5000L
+		private val TAG = ActivityRecognitionManager::class.java.simpleName
 	}
 
-	private var successCallback: (() -> Unit)? = null
-	private var errorCallback: ((ErrorCodes) -> Unit)? = null
-	private var updatesCallback: ((String) -> Unit)? = null
+	private var callback: ActivityDataCallback? = null
 
 	private var pendingIntent: PendingIntent? = null
 	private var serviceClient: ActivityRecognitionClient? = null
 
-	fun startService(context: Context, onSuccess: (() -> Unit), onError: ((ErrorCodes) -> Unit),
-			updatesListener: ((String) -> Unit)) {
-
+	fun startService(context: Context, callback: ActivityDataCallback) {
 		if (serviceClient != null) {
 			Log.d(TAG, "The activity recognition service has already started.")
 			stopService(context)
 		}
 
-		this.successCallback = onSuccess
-		this.errorCallback = onError
-		this.updatesCallback = updatesListener
+		this.callback = callback
 
 		registerSharedPreferenceChangeListener(context)
 		requestActivityUpdates(context)
@@ -44,66 +38,77 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		unregisterSharedPreferenceChangeListener(context)
 		removeActivityUpdates()
 
-		this.errorCallback = null
-		this.successCallback = null
-		this.updatesCallback = null
+		this.callback = null
 	}
 
 	private fun registerSharedPreferenceChangeListener(context: Context) {
 		val prefs = context.getSharedPreferences(
-				Constants.ACTIVITY_RECOGNITION_RESULT_PREFS_NAME, Context.MODE_PRIVATE) ?: return
+			PreferencesKey.ACTIVITY_RECOGNITION_RESULT_PREFS, Context.MODE_PRIVATE) ?: return
 		prefs.registerOnSharedPreferenceChangeListener(this)
 		with (prefs.edit()) {
-			remove(Constants.ACTIVITY_DATA_PREFS_KEY)
-			remove(Constants.ACTIVITY_ERROR_PREFS_KEY)
+			remove(PreferencesKey.ACTIVITY_DATA)
+			remove(PreferencesKey.ACTIVITY_ERROR)
 			commit()
 		}
 	}
 
 	private fun unregisterSharedPreferenceChangeListener(context: Context) {
 		val prefs = context.getSharedPreferences(
-				Constants.ACTIVITY_RECOGNITION_RESULT_PREFS_NAME, Context.MODE_PRIVATE) ?: return
+			PreferencesKey.ACTIVITY_RECOGNITION_RESULT_PREFS, Context.MODE_PRIVATE) ?: return
 		prefs.unregisterOnSharedPreferenceChangeListener(this)
+		with (prefs.edit()) {
+			clear()
+			commit()
+		}
 	}
 
 	@SuppressLint("MissingPermission")
 	private fun requestActivityUpdates(context: Context) {
-		pendingIntent = getPendingIntentForService(context)
+		pendingIntent = getPendingIntent(context)
 		serviceClient = ActivityRecognition.getClient(context)
 
-		val task = serviceClient?.requestActivityUpdates(UPDATES_INTERVAL_MILLIS, pendingIntent!!)
-		task?.addOnSuccessListener { successCallback?.invoke() }
-		task?.addOnFailureListener { errorCallback?.invoke(ErrorCodes.ACTIVITY_UPDATES_REQUEST_FAILED) }
+		val task = serviceClient?.requestActivityUpdates(1000, pendingIntent!!)
+		task?.addOnSuccessListener {
+			// success
+		}
+		task?.addOnFailureListener {
+			callback?.onError(ErrorCodes.ACTIVITY_UPDATES_REQUEST_FAILED)
+		}
 	}
 
 	@SuppressLint("MissingPermission")
 	private fun removeActivityUpdates() {
 		val task = serviceClient?.removeActivityUpdates(pendingIntent!!)
-		task?.addOnSuccessListener { successCallback?.invoke() }
-		task?.addOnFailureListener { errorCallback?.invoke(ErrorCodes.ACTIVITY_UPDATES_REMOVE_FAILED) }
+		task?.addOnSuccessListener {
+			// success
+		}
+		task?.addOnFailureListener {
+			callback?.onError(ErrorCodes.ACTIVITY_UPDATES_REMOVE_FAILED)
+		}
 
 		pendingIntent = null
 		serviceClient = null
 	}
 
-	private fun getPendingIntentForService(context: Context): PendingIntent {
+	private fun getPendingIntent(context: Context): PendingIntent {
 		val intent = Intent(context, ActivityRecognitionIntentReceiver::class.java)
-		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)
-		} else {
-			PendingIntent.getBroadcast(context, 0, intent, 0)
+		var flags = PendingIntent.FLAG_UPDATE_CURRENT
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			flags = flags or PendingIntent.FLAG_MUTABLE
 		}
+
+		return PendingIntent.getBroadcast(context, RequestCode.ACTIVITY_DETECTED, intent, flags)
 	}
 
 	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
 		when (key) {
-			Constants.ACTIVITY_DATA_PREFS_KEY -> {
+			PreferencesKey.ACTIVITY_DATA -> {
 				val data = sharedPreferences?.getString(key, null) ?: return
-				updatesCallback?.invoke(data)
+				callback?.onUpdate(data)
 			}
-			Constants.ACTIVITY_ERROR_PREFS_KEY -> {
+			PreferencesKey.ACTIVITY_ERROR -> {
 				val error = sharedPreferences?.getString(key, null) ?: return
-				errorCallback?.invoke(ErrorCodes.valueOf(error))
+				callback?.onError(ErrorCodes.valueOf(error))
 			}
 		}
 	}

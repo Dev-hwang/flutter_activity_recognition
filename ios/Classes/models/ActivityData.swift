@@ -8,7 +8,7 @@
 import CoreMotion
 import Foundation
 
-struct ActivityData: Codable {
+struct ActivityData : Codable {
   let type: String
   let confidence: String
   

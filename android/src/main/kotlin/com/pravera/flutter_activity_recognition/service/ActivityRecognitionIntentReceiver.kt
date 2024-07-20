@@ -5,10 +5,9 @@ import android.content.Context
 import android.content.Intent
 import com.google.android.gms.location.ActivityRecognitionResult
 
-class ActivityRecognitionIntentReceiver: BroadcastReceiver() {
+class ActivityRecognitionIntentReceiver : BroadcastReceiver() {
 	override fun onReceive(context: Context, intent: Intent) {
 		if (ActivityRecognitionResult.hasResult(intent)) {
-			intent.setClass(context, ActivityRecognitionIntentService::class.java)
 			ActivityRecognitionIntentService.enqueueWork(context, intent)
 		}
 	}

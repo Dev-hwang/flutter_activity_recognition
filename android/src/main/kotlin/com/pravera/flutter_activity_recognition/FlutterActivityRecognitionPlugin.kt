@@ -1,36 +1,35 @@
 package com.pravera.flutter_activity_recognition
 
-import androidx.annotation.NonNull
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
 /** FlutterActivityRecognitionPlugin */
-class FlutterActivityRecognitionPlugin: FlutterPlugin, ActivityAware {
+class FlutterActivityRecognitionPlugin : FlutterPlugin, ActivityAware {
   private lateinit var methodCallHandler: MethodCallHandlerImpl
   private lateinit var streamHandler: StreamHandlerImpl
 
-  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     methodCallHandler = MethodCallHandlerImpl(binding.applicationContext)
-    methodCallHandler.startListening(binding.binaryMessenger)
+    methodCallHandler.init(binding.binaryMessenger)
 
     streamHandler = StreamHandlerImpl(binding.applicationContext)
-    streamHandler.startListening(binding.binaryMessenger)
+    streamHandler.init(binding.binaryMessenger)
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    if (::methodCallHandler.isInitialized)
-      methodCallHandler.stopListening()
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    if (::methodCallHandler.isInitialized) {
+      methodCallHandler.dispose()
+    }
 
-    if (::streamHandler.isInitialized)
-      streamHandler.stopListening()
+    if (::streamHandler.isInitialized) {
+      streamHandler.dispose()
+    }
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    methodCallHandler.setActivity(binding.activity)
-    methodCallHandler.initListenersUsingBinding(binding)
-    streamHandler.setActivity(binding.activity)
+    methodCallHandler.onAttachedToActivity(binding)
+    streamHandler.onAttachedToActivity(binding)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -42,7 +41,7 @@ class FlutterActivityRecognitionPlugin: FlutterPlugin, ActivityAware {
   }
 
   override fun onDetachedFromActivity() {
-    methodCallHandler.setActivity(null)
-    streamHandler.setActivity(null)
+    methodCallHandler.onDetachedFromActivity()
+    streamHandler.onDetachedFromActivity()
   }
 }

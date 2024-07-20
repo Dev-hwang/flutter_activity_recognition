@@ -7,22 +7,26 @@
 
 import Foundation
 
-class MethodCallHandlerImpl {
+class MethodCallHandlerImpl : NSObject {
   private let methodChannel: FlutterMethodChannel
-  private let permissionManager = PermissionManager()
+  private let activityPermissionManager: ActivityPermissionManager
   
   init(messenger: FlutterBinaryMessenger) {
-    self.methodChannel = FlutterMethodChannel(
-      name: "flutter_activity_recognition/method", binaryMessenger: messenger)
-    self.methodChannel.setMethodCallHandler(methodCallHandler)
+    self.activityPermissionManager = ActivityPermissionManager()
+    self.methodChannel = FlutterMethodChannel(name: "flutter_activity_recognition/method", binaryMessenger: messenger)
+    super.init()
+    self.methodChannel.setMethodCallHandler(onMethodCall)
   }
   
-  private func methodCallHandler(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+  func onMethodCall(call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
       case "checkPermission":
-        permissionManager.checkMotionActivityPermission { permissionRequestResult in
-          result(permissionRequestResult.rawValue)
-        }
+        let handler = ActivityPermissionHandlerImpl(result)
+        activityPermissionManager.checkPermission(handler: handler)
+        break
+      case "requestPermission":
+        let handler = ActivityPermissionHandlerImpl(result)
+        activityPermissionManager.requestPermission(handler: handler)
         break
       default:
         result(FlutterMethodNotImplemented)
