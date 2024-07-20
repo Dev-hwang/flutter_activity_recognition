@@ -5,36 +5,31 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
-import android.util.Log
 import com.google.android.gms.location.*
 import com.pravera.flutter_activity_recognition.Constants
 import com.pravera.flutter_activity_recognition.errors.ErrorCodes
 
 class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeListener {
 	companion object {
-		const val TAG = "ActivityRecognition"
-		const val UPDATES_INTERVAL_MILLIS = 5000L
+		private const val UPDATES_INTERVAL_MILLIS = 5000L
 	}
 
-	private var successCallback: (() -> Unit)? = null
-	private var errorCallback: ((ErrorCodes) -> Unit)? = null
-	private var updatesCallback: ((String) -> Unit)? = null
+	private var onSuccess: (() -> Unit)? = null
+	private var onError: ((ErrorCodes) -> Unit)? = null
+	private var onUpdate: ((String) -> Unit)? = null
 
 	private var pendingIntent: PendingIntent? = null
 	private var serviceClient: ActivityRecognitionClient? = null
 
-	fun startService(context: Context, onSuccess: (() -> Unit), onError: ((ErrorCodes) -> Unit),
-			updatesListener: ((String) -> Unit)) {
-
+	fun startService(context: Context, onSuccess: (() -> Unit), onError: ((ErrorCodes) -> Unit), onUpdate: ((String) -> Unit)) {
+		// already started
 		if (serviceClient != null) {
-			Log.d(TAG, "The activity recognition service has already started.")
 			stopService(context)
 		}
 
-		this.successCallback = onSuccess
-		this.errorCallback = onError
-		this.updatesCallback = updatesListener
+		this.onSuccess = onSuccess
+		this.onError = onError
+		this.onUpdate = onUpdate
 
 		registerSharedPreferenceChangeListener(context)
 		requestActivityUpdates(context)
@@ -44,9 +39,9 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		unregisterSharedPreferenceChangeListener(context)
 		removeActivityUpdates()
 
-		this.errorCallback = null
-		this.successCallback = null
-		this.updatesCallback = null
+		this.onSuccess = null
+		this.onError = null
+		this.onUpdate = null
 	}
 
 	private fun registerSharedPreferenceChangeListener(context: Context) {
@@ -72,15 +67,15 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 		serviceClient = ActivityRecognition.getClient(context)
 
 		val task = serviceClient?.requestActivityUpdates(UPDATES_INTERVAL_MILLIS, pendingIntent!!)
-		task?.addOnSuccessListener { successCallback?.invoke() }
-		task?.addOnFailureListener { errorCallback?.invoke(ErrorCodes.ACTIVITY_UPDATES_REQUEST_FAILED) }
+		task?.addOnSuccessListener { onSuccess?.invoke() }
+		task?.addOnFailureListener { onError?.invoke(ErrorCodes.ACTIVITY_UPDATES_REQUEST_FAILED) }
 	}
 
 	@SuppressLint("MissingPermission")
 	private fun removeActivityUpdates() {
 		val task = serviceClient?.removeActivityUpdates(pendingIntent!!)
-		task?.addOnSuccessListener { successCallback?.invoke() }
-		task?.addOnFailureListener { errorCallback?.invoke(ErrorCodes.ACTIVITY_UPDATES_REMOVE_FAILED) }
+		task?.addOnSuccessListener { onSuccess?.invoke() }
+		task?.addOnFailureListener { onError?.invoke(ErrorCodes.ACTIVITY_UPDATES_REMOVE_FAILED) }
 
 		pendingIntent = null
 		serviceClient = null
@@ -88,22 +83,19 @@ class ActivityRecognitionManager: SharedPreferences.OnSharedPreferenceChangeList
 
 	private fun getPendingIntentForService(context: Context): PendingIntent {
 		val intent = Intent(context, ActivityRecognitionIntentReceiver::class.java)
-		return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)
-		} else {
-			PendingIntent.getBroadcast(context, 0, intent, 0)
-		}
+		return PendingIntent.getBroadcast(
+				context, Constants.ACTIVITY_DETECTED, intent, PendingIntent.FLAG_MUTABLE)
 	}
 
 	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
 		when (key) {
 			Constants.ACTIVITY_DATA_PREFS_KEY -> {
-				val data = sharedPreferences?.getString(key, null) ?: return
-				updatesCallback?.invoke(data)
+				val dataJson = sharedPreferences?.getString(key, null) ?: return
+				onUpdate?.invoke(dataJson)
 			}
 			Constants.ACTIVITY_ERROR_PREFS_KEY -> {
 				val error = sharedPreferences?.getString(key, null) ?: return
-				errorCallback?.invoke(ErrorCodes.valueOf(error))
+				onError?.invoke(ErrorCodes.valueOf(error))
 			}
 		}
 	}

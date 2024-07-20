@@ -12,7 +12,8 @@ import com.pravera.flutter_activity_recognition.utils.ActivityRecognitionUtils
 
 class ActivityRecognitionIntentService: JobIntentService() {
 	companion object {
-		val jsonConverter: Gson = Gson()
+		private val jsonConverter: Gson = Gson()
+
 		fun enqueueWork(context: Context, intent: Intent) {
 			enqueueWork(context, ActivityRecognitionIntentService::class.java,
 					Constants.ACTIVITY_RECOGNITION_INTENT_SERVICE_JOB_ID, intent)
@@ -20,8 +21,8 @@ class ActivityRecognitionIntentService: JobIntentService() {
 	}
 
 	override fun onHandleWork(intent: Intent) {
-		val extractedResult = ActivityRecognitionResult.extractResult(intent)
-		val probableActivities = extractedResult?.probableActivities
+		val data = ActivityRecognitionResult.extractResult(intent)
+		val probableActivities = data?.probableActivities
 		val mostProbableActivity = probableActivities?.maxByOrNull { it.confidence } ?: return
 
 		val activityData = ActivityData(
