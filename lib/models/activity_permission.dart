@@ -1,5 +1,5 @@
 /// Defines the type of permission request result.
-enum PermissionRequestResult {
+enum ActivityPermission {
   /// Occurs when the user grants permission.
   GRANTED,
 
@@ -10,9 +10,9 @@ enum PermissionRequestResult {
   PERMANENTLY_DENIED;
 
   /// Returns the permission request result from [value].
-  static PermissionRequestResult fromString(String? value) =>
-      PermissionRequestResult.values.firstWhere(
-        (e) => e.toString() == 'PermissionRequestResult.$value',
-        orElse: () => PermissionRequestResult.PERMANENTLY_DENIED,
+  static ActivityPermission fromString(String? value) =>
+      ActivityPermission.values.firstWhere(
+        (e) => e.toString() == 'ActivityPermission.$value',
+        orElse: () => ActivityPermission.PERMANENTLY_DENIED,
       );
 }

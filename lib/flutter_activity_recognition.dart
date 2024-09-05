@@ -3,12 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_activity_recognition/models/activity.dart';
-import 'package:flutter_activity_recognition/models/permission_request_result.dart';
+import 'package:flutter_activity_recognition/models/activity_permission.dart';
 
 export 'package:flutter_activity_recognition/models/activity.dart';
 export 'package:flutter_activity_recognition/models/activity_confidence.dart';
+export 'package:flutter_activity_recognition/models/activity_permission.dart';
 export 'package:flutter_activity_recognition/models/activity_type.dart';
-export 'package:flutter_activity_recognition/models/permission_request_result.dart';
 
 /// A class that provides an activity recognition API.
 class FlutterActivityRecognition {
@@ -34,15 +34,15 @@ class FlutterActivityRecognition {
   }
 
   /// Check whether activity recognition permission is granted.
-  Future<PermissionRequestResult> checkPermission() async {
+  Future<ActivityPermission> checkPermission() async {
     final String? result = await _methodChannel.invokeMethod('checkPermission');
-    return PermissionRequestResult.fromString(result);
+    return ActivityPermission.fromString(result);
   }
 
   /// Request activity recognition permission.
-  Future<PermissionRequestResult> requestPermission() async {
+  Future<ActivityPermission> requestPermission() async {
     final String? result =
         await _methodChannel.invokeMethod('requestPermission');
-    return PermissionRequestResult.fromString(result);
+    return ActivityPermission.fromString(result);
   }
 }
