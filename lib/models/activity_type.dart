@@ -16,12 +16,12 @@ enum ActivityType {
   WALKING,
 
   /// Unable to detect the current activity.
-  UNKNOWN
-}
+  UNKNOWN;
 
-/// Returns the activity type from [value].
-ActivityType getActivityTypeFromString(String? value) {
-  return ActivityType.values.firstWhere(
-      (e) => e.toString() == 'ActivityType.$value',
-      orElse: () => ActivityType.UNKNOWN);
+  /// Returns the activity type from [value].
+  static ActivityType fromString(String? value) =>
+      ActivityType.values.firstWhere(
+        (e) => e.toString() == 'ActivityType.$value',
+        orElse: () => ActivityType.UNKNOWN,
+      );
 }

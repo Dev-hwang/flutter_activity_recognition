@@ -12,19 +12,24 @@ class Activity {
   /// Constructs an instance of [Activity].
   const Activity(this.type, this.confidence);
 
-  /// Returns the data fields of [Activity] in JSON format.
-  Map<String, dynamic> toJson() => {'type': type, 'confidence': confidence};
+  factory Activity.fromJson(Map<String, dynamic> json) {
+    final ActivityType type = ActivityType.fromString(json['type']);
+    final ActivityConfidence confidence =
+        ActivityConfidence.fromString(json['confidence']);
 
-  /// Gets an activity of type UNKNOWN.
-  static Activity get unknown =>
-      Activity(ActivityType.UNKNOWN, ActivityConfidence.LOW);
+    return Activity(type, confidence);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type.name,
+      'confidence': confidence.name,
+    };
+  }
 
   @override
   bool operator ==(Object other) =>
-      other is Activity &&
-      runtimeType == other.runtimeType &&
-      type == other.type &&
-      confidence == other.confidence;
+      other is Activity && type == other.type && confidence == other.confidence;
 
   @override
   int get hashCode => type.hashCode ^ confidence.hashCode;

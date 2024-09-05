@@ -7,12 +7,12 @@ enum PermissionRequestResult {
   DENIED,
 
   /// Occurs when the user denies the permission once and chooses not to ask again.
-  PERMANENTLY_DENIED
-}
+  PERMANENTLY_DENIED;
 
-/// Returns the permission request result from [value].
-PermissionRequestResult getPermissionRequestResultFromString(String? value) {
-  return PermissionRequestResult.values.firstWhere(
-      (e) => e.toString() == 'PermissionRequestResult.$value',
-      orElse: () => PermissionRequestResult.PERMANENTLY_DENIED);
+  /// Returns the permission request result from [value].
+  static PermissionRequestResult fromString(String? value) =>
+      PermissionRequestResult.values.firstWhere(
+        (e) => e.toString() == 'PermissionRequestResult.$value',
+        orElse: () => PermissionRequestResult.PERMANENTLY_DENIED,
+      );
 }

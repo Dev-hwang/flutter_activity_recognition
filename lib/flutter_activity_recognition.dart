@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_activity_recognition/models/activity.dart';
-import 'package:flutter_activity_recognition/models/activity_confidence.dart';
-import 'package:flutter_activity_recognition/models/activity_type.dart';
 import 'package:flutter_activity_recognition/models/permission_request_result.dart';
 
 export 'package:flutter_activity_recognition/models/activity.dart';
@@ -29,24 +26,23 @@ class FlutterActivityRecognition {
   /// Gets the activity stream.
   Stream<Activity> get activityStream {
     return _eventChannel.receiveBroadcastStream().map((event) {
-      final data = Map<String, dynamic>.from(jsonDecode(event));
-      final type = getActivityTypeFromString(data['type']);
-      final confidence = getActivityConfidenceFromString(data['confidence']);
-      return Activity(type, confidence);
+      final Map<String, dynamic> json =
+          Map<String, dynamic>.from(jsonDecode(event));
+
+      return Activity.fromJson(json);
     });
   }
 
   /// Check whether activity recognition permission is granted.
   Future<PermissionRequestResult> checkPermission() async {
-    final permissionResult =
-        await _methodChannel.invokeMethod('checkPermission');
-    return getPermissionRequestResultFromString(permissionResult);
+    final String? result = await _methodChannel.invokeMethod('checkPermission');
+    return PermissionRequestResult.fromString(result);
   }
 
   /// Request activity recognition permission.
   Future<PermissionRequestResult> requestPermission() async {
-    final permissionResult =
+    final String? result =
         await _methodChannel.invokeMethod('requestPermission');
-    return getPermissionRequestResultFromString(permissionResult);
+    return PermissionRequestResult.fromString(result);
   }
 }
