@@ -4,8 +4,8 @@ This plugin is used to recognize user activity on Android and iOS platforms. To 
 
 ## Features
 
-* Can check or request activity recognition permission.
-* Subscribe to an activity stream to detect user activity in real time.
+* Can request activity recognition permission.
+* Can subscribe to `ActivityStream` to listen activity in real time.
 
 ## Getting started
 
@@ -38,26 +38,20 @@ Open the `ios/Runner/Info.plist` file and add the following permission inside th
 
 ## How to use
 
-1. Create a `FlutterActivityRecognition` instance.
+1. Checks whether activity recognition permission is granted.
 
 ```dart
-final activityRecognition = FlutterActivityRecognition.instance;
-```
-
-2. Checks whether activity recognition permission is granted.
-
-```dart
-Future<bool> isPermissionGrants() async {
-  // Check if the user has granted permission. If not, request permission.
-  PermissionRequestResult reqResult;
-  reqResult = await activityRecognition.checkPermission();
-  if (reqResult == PermissionRequestResult.PERMANENTLY_DENIED) {
-    dev.log('Permission is permanently denied.');
+Future<bool> _checkAndRequestPermission() async {
+  ActivityPermission permission =
+      await FlutterActivityRecognition.instance.checkPermission();
+  if (permission == ActivityPermission.PERMANENTLY_DENIED) {
+    // permission has been permanently denied.
     return false;
-  } else if (reqResult == PermissionRequestResult.DENIED) {
-    reqResult = await activityRecognition.requestPermission();
-    if (reqResult != PermissionRequestResult.GRANTED) {
-      dev.log('Permission is denied.');
+  } else if (permission == ActivityPermission.DENIED) {
+    permission =
+        await FlutterActivityRecognition.instance.requestPermission();
+    if (permission != ActivityPermission.GRANTED) {
+      // permission is denied.
       return false;
     }
   }
@@ -66,68 +60,37 @@ Future<bool> isPermissionGrants() async {
 } 
 ```
 
-3. Subscribe to an activity stream to receive activity data in real time.
+2. To listen activity in real time, use the `activityStream` getter.
 
 ```dart
-// Subscribe to the activity stream.
-final _activityStreamSubscription = activityRecognition.activityStream
-  .handleError(_handleError)
-  .listen(_onActivityReceive);
-```
+StreamSubscription<Activity>? _activitySubscription;
 
-4. When the widget is dispose or the plugin is finished using, cancel the subscription.
+Future<void> _subscribeActivityStream() async {
+  if (await _checkAndRequestPermission()) {
+    _activitySubscription = FlutterActivityRecognition.instance.activityStream
+        .handleError(_onError)
+        .listen(_onActivity);
+  }
+}
 
-```dart
-@override
-void dispose() {
-  activityStreamSubscription?.cancel();
-  super.dispose();
+void _onActivity(Activity activity) {
+  print('activity detected >> ${activity.toJson()}');
+}
+
+void _onError(dynamic error) {
+  print('error >> $error');
 }
 ```
 
-## Models
+## Background Mode
 
-### :chicken: PermissionRequestResult
+If you want to use this plugin in the background, use the [`flutter_foreground_task`](https://pub.dev/packages/flutter_foreground_task) plugin.
 
-Defines the type of permission request result.
+## More Documentation
 
-| Value | Description |
-|---|---|
-| `GRANTED` | Occurs when the user grants permission. |
-| `DENIED` | Occurs when the user denies permission. |
-| `PERMANENTLY_DENIED` | Occurs when the user denies the permission once and chooses not to ask again. |
+Go [here](./documentation/models_documentation.md) to learn about the `models` provided by this plugin.
 
-### :chicken: Activity
-
-A model representing the user's activity.
-
-| Property | Description |
-|---|---|
-| `type` | The type of activity recognized. |
-| `confidence` | The confidence of activity recognized. |
-
-### :chicken: ActivityType
-
-Defines the type of activity.
-
-| Value | Description |
-|---|---|
-| `IN_VEHICLE` | The device is in a vehicle, such as a car. |
-| `ON_BICYCLE` | The device is on a bicycle. |
-| `RUNNING` | The device is on a user who is running. This is a sub-activity of ON_FOOT. |
-| `STILL` | The device is still (not moving). |
-| `WALKING` | The device is on a user who is walking. This is a sub-activity of ON_FOOT. |
-| `UNKNOWN` | Unable to detect the current activity. |
-
-### :chicken: ActivityConfidence
-
-Defines the confidence of activity.
-
-| Value | Description |
-|---|---|
-| `HIGH` | High accuracy: 80~100 |
-| `MEDIUM` | Medium accuracy: 50~80 |
-| `LOW` | Low accuracy: 0~50 |
+Go [here](./documentation/migration_documentation.md) to `migrate` to the new version.
 
 ## Support
 
