@@ -1,3 +1,9 @@
+## 4.0.0
+
+* [**RENAME**] Rename `PermissionRequestResult` to `ActivityPermission`
+* [**DOCS**] Update example and readme
+* [**REFACTOR**] Refactored the code to make this plugin work properly
+
 ## 3.1.0
 
 * [**FEAT**] Support AGP 8
